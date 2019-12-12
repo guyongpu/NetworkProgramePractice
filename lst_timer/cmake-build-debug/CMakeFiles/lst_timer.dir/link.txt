@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/lst_timer.dir/main.cpp.o CMakeFiles/lst_timer.dir/sort_timer_lst.cpp.o CMakeFiles/lst_timer.dir/util_timer.cpp.o  -o lst_timer 
