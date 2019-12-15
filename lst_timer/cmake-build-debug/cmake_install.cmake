@@ -1,4 +1,4 @@
-# Install script for directory: /home/yongpu/NetworkProgramePractice/lst_timer
+# Install script for directory: /home/yongpu/NetCode/lst_timer
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/yongpu/NetworkProgramePractice/lst_timer/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/yongpu/NetCode/lst_timer/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

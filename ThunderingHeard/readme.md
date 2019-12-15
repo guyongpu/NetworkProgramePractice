@@ -29,7 +29,7 @@ thunder_accept.c  代码
 ~~~
 代码
 ~~~
-thunder_epoll_1.c 为共享epoll_fd模式
+thunder_epoll_1.c 为共享epoll_fd模式  
 thunder_epoll_2.c 为共享epoll_fd模式
 
 ## 2.3 实验运行

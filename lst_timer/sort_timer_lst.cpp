@@ -93,17 +93,20 @@ void sort_timer_lst::tick() {
     time_t cur = time(NULL);
     util_timer *tmp = head;
 
+    /* 从头结点开始依次处理每个定时器，直到遇到一个尚未到期的定时器，这就是定时器的核心逻辑 */
     while (tmp) {
+        /* 因为每个定时器都使用绝对时间作为超时值，所以我们可以把定时器的超时值与系统当前时间比较，判断是否过期 */
         if (cur < tmp->expire) {
-            break;
+            break;  /* 之后的定时器均未过期 */
         }
-    }
 
-    tmp->cb_func(tmp->user_data);
-
-    head = tmp->next;
-    if (head) {
-        head->prev = nullptr;
+        /* 调用定时器的回调函数，以执行定时任务 */
+        tmp->cb_func(tmp->user_data);
+        /* 执行完定时器中的定时任务之后，就将它从链表中删除，并重置链表头结点 */
+        head = tmp->next;
+        if (head) {
+            head->prev = nullptr;
+        }
     }
     return;
 }

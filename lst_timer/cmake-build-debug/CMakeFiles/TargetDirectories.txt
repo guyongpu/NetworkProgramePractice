@@ -1,3 +1,3 @@
-/home/yongpu/NetworkProgramePractice/lst_timer/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/yongpu/NetworkProgramePractice/lst_timer/cmake-build-debug/CMakeFiles/lst_timer.dir
-/home/yongpu/NetworkProgramePractice/lst_timer/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/yongpu/NetCode/lst_timer/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/yongpu/NetCode/lst_timer/cmake-build-debug/CMakeFiles/lst_timer.dir
+/home/yongpu/NetCode/lst_timer/cmake-build-debug/CMakeFiles/edit_cache.dir

@@ -26,7 +26,7 @@ using namespace std;
 
 static int pipefd[2];
 
-static sort_timer_lst timer_lst;
+static sort_timer_lst timer_lst;        // 使用升序链表来管理定时器
 static int epollfd = 0;
 
 int setnonblocking(int fd);
@@ -77,29 +77,31 @@ int main(int argc, char *argv[]) {
     /* 使用socketpair，和pipe的区别是pipe是半双工，这个是全双工 */
     ret = socketpair(PF_UNIX, SOCK_STREAM, 0, pipefd);
     assert(ret != -1);
-    setnonblocking(pipefd[1]);
-    addfd(epollfd, pipefd[0]);
+    setnonblocking(pipefd[1]);  /* 写端 */
+    addfd(epollfd, pipefd[0]);  /* 读端 */
 
-    /* 设置信号处理函数 */
+    /* 设置信号处理函数，用于停止进程 */
     addsig(SIGALRM);
     addsig(SIGTERM);
     bool stop_server = false;
 
-    /* 用户数据的  指针  指向那么多的结构吧 指针加1  数组下标加1 */
+
     client_data *users = new client_data[FD_LIMIT];
     bool timeout = false;
     alarm(TIMESLOT); /* 定时 */
 
+    printf("Sever start run....\n");
     while (!stop_server) {
         int number = epoll_wait(epollfd, events, MAX_EVENT_NUMBER, -1);
-        if ((number < 0) && (errno != EINTR)) {
+        if ((number < 0) && (errno != EINTR)) { /* EINTR表示中断 */
             printf("epoll failure\n");
         }
 
         for (int i = 0; i < number; i++) {
-            int sockfd = events[i].data.fd;
+            int sockfd = events[i].data.fd; /* 遍历文件描述符 */
             /* 处理新到的客户连接 */
             if (sockfd == listenfd) {
+                printf("sockfd = new client\n");
                 struct sockaddr_in client_address;
                 socklen_t client_addrlength = sizeof(client_address);
                 int connfd = accept(listenfd, (struct sockaddr *) &client_address, &client_addrlength);
@@ -121,39 +123,52 @@ int main(int argc, char *argv[]) {
                 users[connfd].timer = timer;        /* 用户数据回填 定时器类的信息 */
                 timer_lst.add_timer(timer);         /* 定时器类 加到链表中去 */
             }
-                /* 处理信号 */
+                /* 处理信号，因为当产生SIGALRM和SIGTERM信号时，回调函数会在管道写端写入数据，则可以从读端读取.
+                 * 而管道的读端pipefd[0]也在epoll监听的树上，则说明管道的一端发来了数据
+                 * EPOLLIN:套接字已标记为非阻塞，而接收操作被阻塞或者接收超时
+                 */
             else if ((sockfd == pipefd[0]) && (events[i].events && EPOLLIN)) {
+                printf("sockfd = pipefd[0]\n");
                 int sig;
                 char signals[1024];
-                ret = recv(pipefd[0], signals, sizeof(signals), 0);
-                if (ret == -1) {
+                /*
+                 * recv函数返回值情况：
+                 * <0 出错
+                 * =0 连接关闭
+                 * >0 接收到数据大小
+                 */
+                ret = recv(pipefd[0], signals, sizeof(signals), 0); /* 获取管道中的数据 */
+                /* 返回值<0时并且(errno == EINTR || errno == EWOULDBLOCK || errno == EAGAIN)的情况下认为连接是正常的，继续接收。*/
+                if (ret == -1) {                    /* 失败 */
                     // handle the error
                     continue;
-                } else if (ret == 0) {
+                } else if (ret == 0) {              /* 另一端已经关闭 */
                     continue;
-                } else {
+                } else {                            /* 成功读取到数据 */
                     for (int i = 0; i < ret; ++i) {
-                        switch (signals[i]) {
+                        printf("signals[i] = %d \n", (int)signals[i]);
+                        switch (signals[i]) {       /* 因为信号为1-64，所以可以用一个字符来表示 */
                             case SIGALRM: {
                                 /* 用timeout变量标记有定时任务需要处理，但不立即处理定时任务。
                                  * 这是因为定时任务的优先级不是很高，我们优先处理其他更重要的任务。 */
                                 timeout = true;
                                 break;
                             }
-                            case SIGTERM: {
-                            }
+                            case SIGTERM: {         /* 停止服务器while */
                                 stop_server = true;
+                            }
                         }
                     }
                 }
             }
                 /* 处理客户端连接上接收到的数据 */
             else if (events[i].events & EPOLLIN) {
+                printf("sockfd = client data\n");
                 memset(users[sockfd].buf, '\0', BUFFER_SIZE);
                 ret = recv(sockfd, users[sockfd].buf, BUFFER_SIZE - 1, 0);
                 printf("get %d bytes of client data %s from %d\n", ret, users[sockfd].buf, sockfd);
 
-                util_timer *timer = users[sockfd].timer;
+                util_timer *timer = users[sockfd].timer;    /* 获取该客户端对应的定时器timer */
                 if (ret < 0) {
                     /* 如果发生读错误，则关闭连接，并移除其对应的定时器 */
                     if (errno != EAGAIN) {
@@ -162,7 +177,7 @@ int main(int argc, char *argv[]) {
                             timer_lst.del_timer(timer);
                         }
                     }
-                } else if (ret == 0) {
+                } else if (ret == 0) {              /* 另一端已经关闭 */
                     /* 如果对方已经关闭连接，则我们也关闭连接，并移除对应的定时器 */
                     cb_func(&users[sockfd]);
                     if (timer) {
