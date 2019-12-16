@@ -87,6 +87,9 @@
 		<Unit filename="/home/yongpu/NetCode/lst_timer/main.cpp">
 			<Option target="lst_timer"/>
 		</Unit>
+		<Unit filename="/home/yongpu/NetCode/lst_timer/main2.cpp">
+			<Option target="lst_timer"/>
+		</Unit>
 		<Unit filename="/home/yongpu/NetCode/lst_timer/sort_timer_lst.cpp">
 			<Option target="lst_timer"/>
 		</Unit>

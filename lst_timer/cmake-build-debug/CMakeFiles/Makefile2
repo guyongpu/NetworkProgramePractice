@@ -74,12 +74,12 @@ preinstall:
 CMakeFiles/lst_timer.dir/all:
 	$(MAKE) -f CMakeFiles/lst_timer.dir/build.make CMakeFiles/lst_timer.dir/depend
 	$(MAKE) -f CMakeFiles/lst_timer.dir/build.make CMakeFiles/lst_timer.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/yongpu/NetCode/lst_timer/cmake-build-debug/CMakeFiles --progress-num=1,2,3,4 "Built target lst_timer"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/yongpu/NetCode/lst_timer/cmake-build-debug/CMakeFiles --progress-num=1,2,3,4,5 "Built target lst_timer"
 .PHONY : CMakeFiles/lst_timer.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/lst_timer.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/yongpu/NetCode/lst_timer/cmake-build-debug/CMakeFiles 4
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/yongpu/NetCode/lst_timer/cmake-build-debug/CMakeFiles 5
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/lst_timer.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/yongpu/NetCode/lst_timer/cmake-build-debug/CMakeFiles 0
 .PHONY : CMakeFiles/lst_timer.dir/rule
