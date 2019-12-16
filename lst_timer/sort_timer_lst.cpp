@@ -93,12 +93,25 @@ void sort_timer_lst::tick() {
     time_t cur = time(NULL);
     util_timer *tmp = head;
 
+    /*
+    // 查看链表的所有时间节点
+    util_timer *test_tmp = head;
+    printf("开始遍历：");
+    while (test_tmp) {
+        cout << test_tmp->expire << " ";
+        test_tmp = test_tmp->next;
+    }
+    cout << endl;
+     */
+
     /* 从头结点开始依次处理每个定时器，直到遇到一个尚未到期的定时器，这就是定时器的核心逻辑 */
+    int t = 0;
     while (tmp) {
         /* 因为每个定时器都使用绝对时间作为超时值，所以我们可以把定时器的超时值与系统当前时间比较，判断是否过期 */
         if (cur < tmp->expire) {
             break;  /* 之后的定时器均未过期 */
         }
+        cout << t++ << "th timer, expire = " << tmp->expire << endl;
 
         /* 调用定时器的回调函数，以执行定时任务 */
         tmp->cb_func(tmp->user_data);
@@ -107,12 +120,14 @@ void sort_timer_lst::tick() {
         if (head) {
             head->prev = nullptr;
         }
+        delete tmp;
+        tmp = head;
     }
     return;
 }
 
 /** 一个辅助重载函数，它被公有的add_timer函数和adjust_timer函数调用。
- * 该函数表示讲目标定时器timer添加到节点lst_head之后的部分链表中 */
+ * 该函数表示将目标定时器timer添加到节点lst_head之后的部分链表中 */
 void sort_timer_lst::add_timer(util_timer *timer, util_timer *lst_head) {
     util_timer *prev = lst_head;
     util_timer *tmp = prev->next;

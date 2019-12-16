@@ -58,6 +58,9 @@ int main(int argc, char *argv[]) {
     int listenfd = socket(PF_INET, SOCK_STREAM, 0);
     assert(listenfd >= 0);
 
+    int opt = 1;
+    setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+
     /* 绑定端口 */
     ret = bind(listenfd, (struct sockaddr *) &address, sizeof(address));
     assert(ret != -1);
@@ -96,7 +99,7 @@ int main(int argc, char *argv[]) {
         if ((number < 0) && (errno != EINTR)) { /* EINTR表示中断 */
             printf("epoll failure\n");
         }
-
+        printf("\n");
         for (int i = 0; i < number; i++) {
             int sockfd = events[i].data.fd; /* 遍历文件描述符 */
             /* 处理新到的客户连接 */
@@ -117,7 +120,7 @@ int main(int argc, char *argv[]) {
                 timer->user_data = &users[connfd];  /* client_data的指针回填到链表节点上 */
                 timer->cb_func = cb_func;           /* 函数指针回填 入参就是节点自己的user_data成员 */
                 time_t cur = time(NULL);
-                timer->expire = cur + 3 * timeout;  /* 给这个已经连接的套接字定时 */
+                timer->expire = cur + 3 * TIMESLOT;  /* 给这个已经连接的套接字定时 */
 
                 /* 前面创建定时、回掉函数、绑定socket信息、都是为下面一行服务的理解就好 */
                 users[connfd].timer = timer;        /* 用户数据回填 定时器类的信息 */
@@ -146,7 +149,7 @@ int main(int argc, char *argv[]) {
                     continue;
                 } else {                            /* 成功读取到数据 */
                     for (int i = 0; i < ret; ++i) {
-                        printf("signals[i] = %d \n", (int)signals[i]);
+                        printf("signals[i] = %d \n", (int) signals[i]);
                         switch (signals[i]) {       /* 因为信号为1-64，所以可以用一个字符来表示 */
                             case SIGALRM: {
                                 /* 用timeout变量标记有定时任务需要处理，但不立即处理定时任务。
@@ -205,12 +208,12 @@ int main(int argc, char *argv[]) {
 
     } // end of while
 
-
     close(listenfd);
     close(pipefd[1]);
     close(pipefd[0]);
     delete[]users;
     printf("Hello, World!\n");
+
     return 0;
 }
 
@@ -250,6 +253,7 @@ void addsig(int sig) {
 }
 
 void timer_handler() {
+    printf("Entry the timer_handler() \n");
     /* 定时处理任务，实际上是调用tick函数 */
     timer_lst.tick();
     /* 因为一次alarm调用只会引起一次SIGALRM信号，所以我们要重新定时，以不断触发SIGALRM信号 */
@@ -261,5 +265,6 @@ void cb_func(client_data *user_data) {
     epoll_ctl(epollfd, EPOLL_CTL_DEL, user_data->sockfd, 0);
     assert(user_data);
     close(user_data->sockfd);
-    printf("close fd %d\n", user_data->sockfd);
+    printf("cb_func : close fd %d\n", user_data->sockfd);
+    sleep(1);
 }
