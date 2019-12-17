@@ -1,0 +1,34 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/yongpu/NetCode/heap_timer/heap_timer.cpp
+heap_timer.h
+/home/yongpu/NetCode/heap_timer/heap_timer.h
+
+/home/yongpu/NetCode/heap_timer/heap_timer.h
+iostream
+-
+netinet/in.h
+-
+time.h
+-
+vector
+-
+algorithm
+-
+
+/home/yongpu/NetCode/heap_timer/main.cpp
+iostream
+-
+vector
+-
+algorithm
+-
+heap_timer.h
+/home/yongpu/NetCode/heap_timer/heap_timer.h
+
