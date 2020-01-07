@@ -1,6 +1,7 @@
 #ifndef __THREAD_H
 #define __THREAD_H
- 
+
+#include <unistd.h>
 #include <vector>
 #include <string>
 #include <pthread.h>

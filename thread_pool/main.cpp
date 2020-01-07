@@ -1,5 +1,9 @@
 #include "thread_pool.h"
 #include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <signal.h>
+#include <unistd.h>
  
 class CMyTask: public CTask
 {
