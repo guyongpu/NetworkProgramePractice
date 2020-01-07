@@ -1,3 +1,0 @@
-/home/yongpu/NetCode/LibEvent_helloworld/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/yongpu/NetCode/LibEvent_helloworld/cmake-build-debug/CMakeFiles/LibEvent_helloworld.dir
-/home/yongpu/NetCode/LibEvent_helloworld/cmake-build-debug/CMakeFiles/edit_cache.dir
